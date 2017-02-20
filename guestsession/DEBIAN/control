@@ -1,0 +1,12 @@
+Package: guestsession
+Version: 0.1.1
+Section: misc
+Priority: extra
+Architecture: all
+Maintainer: Jakobus Schürz <xundeenergie@gmail.com>
+Homepage: http://github.com/xundeenergie/guestsession
+Provides: guestsession
+Depends: systemd, adduser
+Recommends: btrfs-progs
+Description: Gastzugang im Kioskmodus
+ Stellt einen Gastzugang bereit, bei dem das Home-Verzeichnis bei jedem Logout gelöscht und bei jedem Login neu erstellt wird. In Abhängigkeit des Vorhandenseins eines btrfs-Filesystem im Zielverzeichnis von Home wird dieses mittels Erstellung eines Subvolumes gelöst. Es sind mehrere Gastzugänge mit unterschiedlicher Konfiguration (z.b. verschiedene Desktop-Sprachen) möglich. Aktiviert wird der Gastzugang über systemd
