@@ -1,0 +1,54 @@
+#! /bin/sh
+
+set -e
+
+# In case this system is running systemd, we make systemd reload the unit files
+# to pick up changes.
+if [ -d /run/systemd/system ] ; then
+	systemctl --system daemon-reload >/dev/null || true
+fi
+# End automatically added section
+# Automatically added by dh_systemd_enable
+if [ "$1" = "remove" ]; then
+	if [ -x "/usr/bin/deb-systemd-helper" ]; then
+		deb-systemd-helper mask guest-sesseion@Gast.service >/dev/null
+	fi
+fi
+
+if [ "$1" = "purge" ]; then
+    if [ -x "/usr/bin/deb-systemd-helper" ]; then
+            #deb-systemd-helper purge cups.path cups.service cups.socket >/dev/null
+            deb-systemd-helper purge guest-sesseion@Gast.service >/dev/null
+            deb-systemd-helper unmask guest-sesseion@Gast.service >/dev/null
+    fi
+fi
+
+case "$1" in
+    purge)
+	#rm -f /etc/cups/printers.conf* /etc/cups/classes.conf*
+	#rmdir /etc/cups 2>/dev/null || true
+        if [ -x "/usr/bin/deb-systemd-helper" ]; then
+                #deb-systemd-helper purge cups.path cups.service cups.socket >/dev/null
+                deb-systemd-helper purge guest-sesseion@Gast.service >/dev/null
+                deb-systemd-helper unmask guest-sesseion@Gast.service >/dev/null
+        fi
+	;;
+    abort-upgrade)
+#        if [ -e /etc/cups/cupsd.conf.conffile-bak ]; then
+#            # Move cupsd.conf back
+#            mv /etc/cups/cupsd.conf.conffile-bak /etc/cups/cupsd.conf
+#        fi
+        ;;
+    remove)
+        if [ -x "/usr/bin/deb-systemd-helper" ]; then
+                deb-systemd-helper mask guest-sesseion@Gast.service >/dev/null
+        fi
+        ;;
+    upgrade|failed-upgrade|abort-install|disappear)
+        ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 0
+
+esac

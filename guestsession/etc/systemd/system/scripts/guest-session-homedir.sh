@@ -60,6 +60,37 @@ create_home () {
 	fi
 }
 
+create_skel () {
+	SRC="/etc/skel"
+	DST=$1
+	DSTDIR=$(dirname $2)
+	echo "Check skel $UID $SRC $DSTDIR $DST"
+	if [ -d "$DST" ]; then
+		return 0
+	else
+		if check_btrfs "$SRC"; then
+			if check_btrfs "$DSTDIR"; then
+				if check_btrfs_subvolume "$SRC"; then
+					$BTRFS subvolume snapshot "$SRC" "$DST"
+				else
+					$BTRFS subvolume create "$DST"
+					$RSYNC -a "$SRC/" "$DST"
+				fi
+			else
+				$MKDIR "$DST"
+				$RSYNC -a "$SRC/" "$DST"
+			fi
+		else
+			if check_btrfs "$DST"; then
+				$BTRFS subvolume create "$DST"
+			else
+				$MKDIR "$DST"
+			fi
+			$RSYNC -a "$SRC/" "$DST"
+		fi
+	fi
+}
+
 while :
 do
 	case $1 in
@@ -68,6 +99,7 @@ do
 			export SRC="$(dirname "$1")/$(basename "$1")"
 			export DST="$(dirname "$2")/$(basename "$2")"
 			export DSTDIR="$(dirname $DST)"
+			create_skel "$DST"
 			delete_home 
 			create_home 
 			break

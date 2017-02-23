@@ -9,7 +9,7 @@ BindsTo=user@%i.service
 [Service]
 Type=oneshot
 RemainAfterExit=true
-Environment="SKEL='/etc/skel-gast'"
+Environment="SKEL='/etc/skel%i'"
 ExecStartPre=/bin/sh -c '/bin/systemctl set-environment SK=$(test -e $SKEL && echo -n $SKEL || echo -n "/etc/skel")'
 ExecStartPre=/bin/sh -c '/bin/systemctl set-environment UHOME=$(getent passwd %i | cut -d: -f6)'
 ExecStartPre=/etc/systemd/system/scripts/guest-session-homedir.sh create "$SKEL" "$UHOME"
