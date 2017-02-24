@@ -22,6 +22,7 @@ case "$1" in
   configure)
       # enable an start the new services
       deb-systemd-invoke enable guest-session@Gast.service
+      deb-systemd-invoke start guest-session@Gast.service
       #/bin/systemctl enable --now guest-session@Gast.service
       ;;
 
