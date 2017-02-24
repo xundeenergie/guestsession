@@ -20,13 +20,14 @@ set -e
 case "$1" in
 
   configure)
-    # enable an start the new services
-    /bin/systemctl enable --now guest-session@Gast.service
-  ;;
+      # enable an start the new services
+      deb-systemd-invoke enable guest-session@Gast.service
+      #/bin/systemctl enable --now guest-session@Gast.service
+      ;;
 
   abort-upgrade|abort-remove|abort-deconfigure)
-    exit 0
-  ;;
+      exit 0
+      ;;
 
   *)
     echo "postinst called with unknown argument \`$1'" >&2
