@@ -12,10 +12,10 @@ case "$1" in
     purge)
 	#rm -f /etc/cups/printers.conf* /etc/cups/classes.conf*
 	#rmdir /etc/cups 2>/dev/null || true
-        if [ -x "/usr/bin/deb-systemd-helper" ]; then
-                #deb-systemd-helper purge cups.path cups.service cups.socket >/dev/null
-                deb-systemd-helper purge guest-sesseion@Gast.service >/dev/null
-                deb-systemd-helper unmask guest-sesseion@Gast.service >/dev/null
+        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
+                #deb-systemd-helper-xe purge cups.path cups.service cups.socket >/dev/null
+                deb-systemd-helper-xe purge guest-sesseion@Gast.service >/dev/null
+                deb-systemd-helper-xe unmask guest-sesseion@Gast.service >/dev/null
         fi
 	;;
     abort-upgrade)
@@ -25,8 +25,8 @@ case "$1" in
 #        fi
         ;;
     remove)
-        if [ -x "/usr/bin/deb-systemd-helper" ]; then
-                deb-systemd-helper mask guest-sesseion@Gast.service >/dev/null
+        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
+                deb-systemd-helper-xe mask guest-sesseion@Gast.service >/dev/null
         fi
         ;;
     upgrade|failed-upgrade|abort-install|disappear)
