@@ -56,6 +56,7 @@ if deb-systemd-helper --quiet was-enabled guest-session@Gast.service; then
         # Enables the unit on first installation, creates new
         # symlinks on upgrades if the unit file has changed.
         deb-systemd-helper enable guest-session@Gast.service >/dev/null || true
+    echo "F1"
 else
       echo "G"
         # Update the statefile to add new symlinks (if any), which need to be
