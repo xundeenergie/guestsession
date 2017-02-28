@@ -10,7 +10,7 @@ if [ -d /run/systemd/system ] ; then
 fi
 case "$1" in
     purge)
-        rm -rf /lib/systemd/system/guest-session@.service
+        #rm -rf /lib/systemd/system/guest-session@.service
         systemctl unmask guest-session@Gast.service
         systemctl disable guest-session@.service
 
@@ -29,7 +29,8 @@ case "$1" in
 #        fi
         ;;
     remove)
-        ln -s /dev/null /lib/systemd/system/guest-session@.service
+        systemctl mask guest-session@.service
+        #ln -s /dev/null /lib/systemd/system/guest-session@.service
 #        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
 #                deb-systemd-helper-xe mask guest-sesseion@Gast.service >/dev/null
 #        fi
