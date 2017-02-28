@@ -28,7 +28,7 @@ case "$1" in
         ;;
     remove)
         systemctl stop guest-session@Gast.service
-        systemctl disable guest-session@.service
+        #systemctl disable guest-session@.service
         #ln -s /dev/null /lib/systemd/system/guest-session@.service
 #        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
 #                deb-systemd-helper-xe mask guest-sesseion@Gast.service >/dev/null
