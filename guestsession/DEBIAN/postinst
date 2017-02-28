@@ -22,8 +22,8 @@ case "$1" in
   configure)
     #deb-systemd-helper-xe unmask guest-session@Gast.service >/dev/null || true
     systemctl unmask guest-session@Gast.service
-    systemctl reenable guest-session@Gast.service
-    systemctl start guest-session@Gast.service
+    systemctl reenable --now guest-session@Gast.service
+    #systemctl start guest-session@Gast.service
 
     ;;
 
