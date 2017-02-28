@@ -63,7 +63,7 @@ create_home () {
 create_skel () {
 	SRC="/etc/skel"
 	DST=$1
-	DSTDIR=$(dirname $2)
+	DSTDIR=$(dirname $1)
 	echo "Check skel $UID $SRC $DSTDIR $DST"
 	if [ -d "$DST" ]; then
 		return 0
@@ -99,7 +99,7 @@ do
 			export SRC="$(dirname "$1")/$(basename "$1")"
 			export DST="$(dirname "$2")/$(basename "$2")"
 			export DSTDIR="$(dirname $DST)"
-			create_skel "$DST"
+			create_skel "$SRC"
 			delete_home 
 			create_home 
 			break
