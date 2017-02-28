@@ -12,7 +12,8 @@ case "$1" in
     purge)
         #rm -rf /lib/systemd/system/guest-session@.service
         systemctl unmask guest-session@Gast.service
-        systemctl disable --now guest-session@.service
+        systemctl stop guest-session@.service
+        systemctl disable guest-session@.service
 
 	#rm -f /etc/cups/printers.conf* /etc/cups/classes.conf*
 	#rmdir /etc/cups 2>/dev/null || true
