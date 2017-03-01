@@ -13,8 +13,8 @@ RemainAfterExit=true
 #ExecStartPre=/bin/sh -c '/bin/systemctl set-environment SK=$(test -e $SKEL && echo -n $SKEL || echo -n "/etc/skel")'
 #ExecStartPre=/bin/sh -c '/bin/systemctl set-environment UHOME=$(getent passwd %i | cut -d: -f6)'
 #ExecStartPre=/etc/systemd/system/scripts/guest-session-homedir.sh create "$SKEL" "$UHOME"
-ExecStartPre=/usr/lib/systemd/scripts/guest-session-homedir.sh create %i
-ExecStart=/bin/chown -R %i:%i "$UHOME" 
+ExecStart=/usr/lib/systemd/scripts/guest-session-homedir.sh create %i
+#ExecStart=/bin/chown -R %i:%i "$UHOME" 
 ExecStop=-/usr/lib/systemd/scripts/guest-session-homedir.sh delete %i
 
 [Install] 

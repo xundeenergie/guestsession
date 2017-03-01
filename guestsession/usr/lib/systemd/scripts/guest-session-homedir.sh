@@ -5,115 +5,102 @@ BTRFS="/bin/btrfs"
 RSYNC="/usr/bin/rsync"
 MKDIR="/bin/mkdir"
 RM="/bin/rm"
+CHOWN="/bin/chown"
+
+action=$1
+uid=$2
+skel=/etc/skel
+skeldir=$(dirname $skel)
+uname=$(/usr/bin/id -u -n $uid)
+uskel=/etc/skel${uname}
+home=$(getent passwd $uid | cut -d: -f6)
+homedir=$(dirname $home)
+
+
 
 check_btrfs () {
-	FS=$(stat -f --format=%T "$1")
-	if [ "$FS" = "btrfs" ]; then
-		return 0
-	else
-		return 1
-	fi
+    FS=$(stat -f --format=%T "$1" 2>/dev/null )
+    if [ "$FS" = "btrfs" ]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 check_btrfs_subvolume () {
-	FS=$(stat --format=%i "$1")
-	if [ $FS -eq 256 ]; then
-		return 0
-	else
-		return 1
-	fi
+    FS=$(stat --format=%i "$1" 2>/dev/null )
+    if [ $FS -eq 256 ]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 
 delete_home () {
-	echo "delete home $DST"
-	if [ -d "$DST" ]; then
-		if check_btrfs_subvolume "$DST"; then
-			$BTRFS subvolume delete -c "$DST"
-		else
-			$RM -rf "$DST"
-		fi
-	fi
+    if [ -d "$home" ]; then
+        if check_btrfs_subvolume "$home"; then
+            $BTRFS subvolume delete -c "$home"
+        else
+            $RM -rf "$home"
+        fi
+    fi
+    return 0
 }
 
 create_home () {
-	echo "XXX $UID $SRC $DSTDIR $DST"
-	if check_btrfs "$SRC"; then
-		if check_btrfs "$DSTDIR"; then
-			if check_btrfs_subvolume "$SRC"; then
-				$BTRFS subvolume snapshot "$SRC" "$DST"
-			else
-				$BTRFS subvolume create "$DST"
-				$RSYNC -a "$SRC/" "$DST"
-			fi
-		else
-			$MKDIR "$DST"
-			$RSYNC -a "$SRC/" "$DST"
-		fi
-	else
-		if check_btrfs "$DST"; then
-			$BTRFS subvolume create "$DST"
-		else
-			$MKDIR "$DST"
-		fi
-		$RSYNC -a "$SRC/" "$DST"
-	fi
+    if check_btrfs "$uskel"; then
+        if check_btrfs "$homedir"; then
+            if check_btrfs_subvolume "$uskel"; then
+                $BTRFS subvolume snapshot "$uskel" "$home"
+            else
+                $BTRFS subvolume create "$home"
+                $RSYNC -a "$uskel/" "$home"
+            fi
+        else
+            $MKDIR "$home"
+            $RSYNC -a "$uskel/" "$home"
+        fi
+    else
+        if check_btrfs "$homedir"; then
+            $BTRFS subvolume create "$home"
+        else
+            $MKDIR "$home"
+        fi
+        $RSYNC -a "$uskel/" "$home"
+    fi
+    $CHOWN ${uid}:${uid} $home
 }
 
 create_skel () {
-	SRC="/etc/skel"
-	DST=$1
-	DSTDIR=$(dirname $1)
-	echo "Check skel $UID $SRC $DSTDIR $DST"
-	if [ -d "$DST" ]; then
-		return 0
-	else
-		if check_btrfs "$SRC"; then
-			if check_btrfs "$DSTDIR"; then
-				if check_btrfs_subvolume "$SRC"; then
-					$BTRFS subvolume snapshot "$SRC" "$DST"
-				else
-					$BTRFS subvolume create "$DST"
-					$RSYNC -a "$SRC/" "$DST"
-				fi
-			else
-				$MKDIR "$DST"
-				$RSYNC -a "$SRC/" "$DST"
-			fi
-		else
-			if check_btrfs "$DST"; then
-				$BTRFS subvolume create "$DST"
-			else
-				$MKDIR "$DST"
-			fi
-			$RSYNC -a "$SRC/" "$DST"
-		fi
-	fi
+    if [ -d "$uskel" ]; then
+        return 0
+    else
+        if check_btrfs "$skeldir"; then
+            if check_btrfs_subvolume "$skel"; then
+                $BTRFS subvolume snapshot "$skel" "$uskel"
+            else
+                $BTRFS subvolume create "$uskel"
+                $RSYNC -a "$skel/" "$uskel"
+            fi
+        else
+            $MKDIR "$uskel"
+            $RSYNC -a "$skel/" "$uskel"
+        fi
+    fi
+    return 0
 }
 
-while :
-do
-	case $1 in
-		create)
-			shift
-			export SRC="$(dirname "$1")/$(basename "$1")"
-			export DST="$(dirname "$2")/$(basename "$2")"
-			export DSTDIR="$(dirname $DST)"
-			create_skel "$SRC"
-			delete_home 
-			create_home 
-			break
-			;;
-		delete)
-			shift
-			export DST="$(dirname "$1")/$(basename "$1")"
-			export DSTDIR="$(dirname $DST)"
-			delete_home 
-			break
-			;;
-		*)
-			exit 1
-	esac
-done
-
-
+case $action in
+    create)
+        create_skel
+        delete_home 
+        create_home 
+        ;;
+    delete)
+        delete_home 
+        ;;
+    *)
+        exit 1
+        ;;
+esac
