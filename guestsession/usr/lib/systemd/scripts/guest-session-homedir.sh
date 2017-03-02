@@ -9,6 +9,7 @@ CHOWN="/bin/chown"
 
 action=$1
 uid=$2
+gid=$(/usr/bin/id -g $uid)
 skel=/etc/skel
 skeldir=$(dirname $skel)
 uname=$(/usr/bin/id -u -n $uid)
@@ -69,7 +70,7 @@ create_home () {
         fi
         $RSYNC -a "$uskel/" "$home"
     fi
-    $CHOWN ${uid}:${uid} $home
+    $CHOWN -R ${uid}:${gid} $home
 }
 
 create_skel () {
