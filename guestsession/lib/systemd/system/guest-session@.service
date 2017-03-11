@@ -16,4 +16,4 @@ ExecStopPost=/bin/sh -c "/bin/systemctl disable guest-home@$GUESTUID.service"
 ExecStopPost=-/usr/sbin/deluser --remove-home $UNAME
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=basic.target
