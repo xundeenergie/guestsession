@@ -3,17 +3,19 @@ Description=Create guest-user (%i) and activate volatile $HOME for it
 
 [Service]
 RemainAfterExit=true
-ExecStartPre=/bin/sh -c '/bin/systemctl set-environment UNAME=$(echo %i|tr '[:upper:]' '[:lower:]' )'
-#ExecStartPre=-/usr/sbin/deluser --remove-home $UNAME
-ExecStartPre=-/usr/sbin/adduser --no-create-home --gecos "%i" --disabled-password $UNAME 
-ExecStartPre=/bin/sh -c '/bin/systemctl set-environment GUESTUID=$(/usr/bin/id -u $UNAME )'
-ExecStartPre=/usr/bin/passwd -d $UNAME
-#ExecStartPre=/bin/sh -c '/bin/systemctl daemon-reload'
-#ExecStart=/bin/echo $GUESTUID
-ExecStart=/bin/sh -c "/bin/systemctl enable guest-home@$GUESTUID.service"
-ExecStop=/bin/loginctl kill-user $UNAME
-ExecStopPost=/bin/sh -c "/bin/systemctl disable guest-home@$GUESTUID.service"
-ExecStopPost=-/usr/sbin/deluser --remove-home $UNAME
+ExecStart=/usr/lib/systemd/scripts/guest-session.sh create "%i"
+ExecStop=/usr/lib/systemd/scripts/guest-session.sh delete "%i"
+#ExecStartPre=/bin/sh -c '/bin/systemctl set-environment UNAME=$(echo %i|tr '[:upper:]' '[:lower:]' )'
+##ExecStartPre=-/usr/sbin/deluser --remove-home $UNAME
+#ExecStartPre=-/usr/sbin/adduser --no-create-home --gecos "%i" --disabled-password $UNAME 
+#ExecStartPre=/bin/sh -c '/bin/systemctl set-environment GUESTUID=$(/usr/bin/id -u $UNAME )'
+#ExecStartPre=/usr/bin/passwd -d $UNAME
+##ExecStartPre=/bin/sh -c '/bin/systemctl daemon-reload'
+##ExecStart=/bin/echo $GUESTUID
+#ExecStart=/bin/sh -c "/bin/systemctl enable guest-home@$GUESTUID.service"
+#ExecStop=/bin/loginctl kill-user $UNAME
+#ExecStopPost=/bin/sh -c "/bin/systemctl disable guest-home@$GUESTUID.service"
+#ExecStopPost=-/usr/sbin/deluser --remove-home $UNAME
 
 [Install]
-WantedBy=basic.target
+WantedBy=multi-user.target
