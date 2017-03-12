@@ -21,8 +21,9 @@ create () {
     if [ $# -eq 2 ]; then
         echo "Create User"
         /usr/sbin/adduser --no-create-home --gecos "$2" --disabled-password "$1"
+        _UID=$(check "$1")
         /usr/bin/passwd -d "$1"
-        /bin/systemctl enable guest-home@$_USERNAME.service
+        /bin/systemctl enable guest-home@${_UID}.service
         return 0
     else
         return 2
@@ -31,9 +32,10 @@ create () {
 
 delete () {
     if [ $# -eq 1 ]; then
-        echo "delete $1"
+        echo "delete $1 $2"
+        _UID=$(check "$1")
         /bin/loginctl kill-user "$1"
-        /bin/systemctl disable guest-home@$_USERNAME.service
+        /bin/systemctl disable guest-home@${_UID}.service
         /usr/sbin/deluser --remove-home "$1"
         return 0
     else
@@ -48,7 +50,7 @@ case $ACTION in
         ;;
     delete)
         check $_USERNAME && \
-        delete "$_USERNAME"
+        delete "$_USERNAME" 
         ;;
     *)
         echo "Wrong call for guestsesseion"
