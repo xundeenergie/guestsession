@@ -4,6 +4,7 @@ ACTION=$1
 shift
 
 _UNAME="$@"
+echo "USERNAME ${_UNAME}"
 _USERNAME=$(echo "${_UNAME}"|tr '[:upper:]' '[:lower:]'|sed -e 's/  *//g' )
 _UID=''
 

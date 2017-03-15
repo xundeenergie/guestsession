@@ -3,8 +3,8 @@ Description=Create guest-user (%i) and activate volatile $HOME for it
 
 [Service]
 RemainAfterExit=true
-ExecStart=/usr/lib/systemd/scripts/guest-session.sh create "%i"
-ExecStop=/usr/lib/systemd/scripts/guest-session.sh delete "%i"
+ExecStart=/usr/lib/systemd/scripts/guest-session.sh create "%I"
+ExecStop=/usr/lib/systemd/scripts/guest-session.sh delete "%I"
 #ExecStartPre=/bin/sh -c '/bin/systemctl set-environment UNAME=$(echo %i|tr '[:upper:]' '[:lower:]' )'
 ##ExecStartPre=-/usr/sbin/deluser --remove-home $UNAME
 #ExecStartPre=-/usr/sbin/adduser --no-create-home --gecos "%i" --disabled-password $UNAME 
