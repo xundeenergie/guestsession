@@ -16,8 +16,8 @@ case "$1" in
 	#rmdir /etc/cups 2>/dev/null || true
 #        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
 #                #deb-systemd-helper-xe purge cups.path cups.service cups.socket >/dev/null
-#                deb-systemd-helper-xe purge guest-sesseion@Gast.service >/dev/null
-#                deb-systemd-helper-xe unmask guest-sesseion@Gast.service >/dev/null
+                deb-systemd-helper-new purge guest-sesseion@Gast.service >/dev/null
+                deb-systemd-helper-new unmask guest-sesseion@Gast.service >/dev/null
 #        fi
 	;;
     abort-upgrade)
@@ -30,9 +30,9 @@ case "$1" in
         #systemctl stop guest-session@Gast.service
         #systemctl disable guest-session@.service
         #ln -s /dev/null /lib/systemd/system/guest-session@.service
-#        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
-#                deb-systemd-helper-xe mask guest-sesseion@Gast.service >/dev/null
-#        fi
+        if [ -x "/usr/bin/deb-systemd-helper-xe" ]; then
+                deb-systemd-helper-new mask guest-sesseion@Gast.service >/dev/null
+        fi
         ;;
     upgrade|failed-upgrade|abort-install|disappear)
         ;;
